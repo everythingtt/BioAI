@@ -6,7 +6,7 @@ import { useBioStore } from "@/store/bioStore";
 import { Widget } from "@/components/ui/Widget";
 import { 
   Send, Brain, Sparkles, User, Heart, 
-  ChevronRight, AlertCircle, Activity 
+  ChevronRight, AlertCircle, Activity, Globe 
 } from "lucide-react";
 import axios from "axios";
 
