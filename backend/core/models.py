@@ -44,9 +44,19 @@ class BiologyProfile(BaseModel):
 
 class Character(BaseModel):
     id: str
+    owner_id: str
     name: str
     description: str
     background: str
     biology: BiologyProfile
     current_state: NeuroState
     is_published: bool = False
+
+class User(BaseModel):
+    id: str
+    username: str
+    created_at: datetime.datetime
+
+class UserCreate(BaseModel):
+    username: str
+    password: str

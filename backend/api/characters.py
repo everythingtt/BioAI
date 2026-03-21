@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Dict, List, Optional
 from core.models import Character, BiologyProfile, NeuroState, ChemicalType
 from core.engine import NeuroEngine
-from core.auth import get_current_user
+from core.auth import get_current_user, TokenData
 from db.models import DBCharacter, SessionLocal
 import uuid
 import time
@@ -26,8 +26,7 @@ async def create_character(
     background: str, 
     biology: Optional[BiologyProfile] = None,
     db: Session = Depends(get_db),
-    # Require authentication for creation
-    current_user: str = Depends(get_current_user)
+    current_user: TokenData = Depends(get_current_user)
 ):
     char_id = str(uuid.uuid4())
     
@@ -38,6 +37,7 @@ async def create_character(
     
     db_char = DBCharacter(
         id=char_id,
+        owner_id=current_user.user_id,
         name=name,
         description=description,
         background=background,
@@ -53,6 +53,7 @@ async def create_character(
     
     return Character(
         id=db_char.id,
+        owner_id=db_char.owner_id,
         name=db_char.name,
         description=db_char.description,
         background=db_char.background,
@@ -80,6 +81,7 @@ async def get_character(char_id: str, db: Session = Depends(get_db)):
     
     return Character(
         id=db_char.id,
+        owner_id=db_char.owner_id,
         name=db_char.name,
         description=db_char.description,
         background=db_char.background,
@@ -115,6 +117,7 @@ async def list_characters(db: Session = Depends(get_db)):
     for db_char in db_chars:
         result.append(Character(
             id=db_char.id,
+            owner_id=db_char.owner_id,
             name=db_char.name,
             description=db_char.description,
             background=db_char.background,
@@ -125,10 +128,13 @@ async def list_characters(db: Session = Depends(get_db)):
     return result
 
 @router.post("/characters/{char_id}/publish")
-async def toggle_publish(char_id: str, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+async def toggle_publish(char_id: str, db: Session = Depends(get_db), current_user: TokenData = Depends(get_current_user)):
     db_char = db.query(DBCharacter).filter(DBCharacter.id == char_id).first()
     if not db_char:
         raise HTTPException(status_code=404, detail="Character not found")
+    
+    if db_char.owner_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to publish this character")
     
     db_char.is_published = not db_char.is_published
     db.commit()
@@ -141,6 +147,7 @@ async def list_published_characters(db: Session = Depends(get_db)):
     for db_char in db_chars:
         result.append(Character(
             id=db_char.id,
+            owner_id=db_char.owner_id,
             name=db_char.name,
             description=db_char.description,
             background=db_char.background,
@@ -151,10 +158,13 @@ async def list_published_characters(db: Session = Depends(get_db)):
     return result
 
 @router.delete("/characters/{char_id}")
-async def delete_character(char_id: str, db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+async def delete_character(char_id: str, db: Session = Depends(get_db), current_user: TokenData = Depends(get_current_user)):
     db_char = db.query(DBCharacter).filter(DBCharacter.id == char_id).first()
     if not db_char:
         raise HTTPException(status_code=404, detail="Character not found")
+    
+    if db_char.owner_id != current_user.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this character")
     
     db.delete(db_char)
     db.commit()

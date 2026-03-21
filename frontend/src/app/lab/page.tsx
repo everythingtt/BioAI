@@ -12,7 +12,7 @@ import axios from "axios";
 export default function Laboratory() {
   const { 
     characters, fetchCharacters, token, setToken, 
-    isLoggedIn, backendUrl, status 
+    isLoggedIn, backendUrl, status, logout 
   } = useBioStore();
 
   const [username, setUsername] = useState("");
@@ -23,9 +23,11 @@ export default function Laboratory() {
   const [desc, setDesc] = useState("");
   const [back, setBack] = useState("");
 
+  const [isRegistering, setIsRegistering] = useState(false);
+
   useEffect(() => {
-    if (status?.status === 'healthy') fetchCharacters();
-  }, [status]);
+    if (status?.status === 'healthy' && isLoggedIn) fetchCharacters();
+  }, [status, isLoggedIn]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,9 +36,27 @@ export default function Laboratory() {
       formData.append("username", username);
       formData.append("password", password);
       const res = await axios.post(`${backendUrl}/api/auth/login`, formData);
-      setToken(res.data.access_token);
+      
+      // We need the user ID from the token or a separate profile call
+      // For now, let's just store the token and username
+      setToken(res.data.access_token, { id: 'temp-id', username }); 
+      fetchCharacters();
     } catch (e) {
-      alert("Unauthorized. BioAI Engine requires valid credentials.");
+      alert("Invalid credentials.");
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${backendUrl}/api/auth/register`, {
+        username,
+        password
+      });
+      alert("Registration successful! Please login.");
+      setIsRegistering(false);
+    } catch (e) {
+      alert("Registration failed. Username might be taken.");
     }
   };
 
@@ -79,26 +99,36 @@ export default function Laboratory() {
   if (!isLoggedIn) {
     return (
       <div className="max-w-md mx-auto pt-20 px-6">
-        <Widget title="Access Restricted" icon={<Lock size={14} />}>
+        <Widget title={isRegistering ? "Create Account" : "Access Restricted"} icon={<Lock size={14} />}>
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <FlaskConical className="mx-auto text-emerald-500 mb-4" size={48} />
-              <h2 className="text-xl font-bold">Neural Engine Login</h2>
-              <p className="text-zinc-500 text-xs">Enter your laboratory credentials to manage biological subjects.</p>
+              <h2 className="text-xl font-bold">{isRegistering ? "Join the Network" : "Neural Engine Login"}</h2>
+              <p className="text-zinc-500 text-xs">
+                {isRegistering ? "Create a personal identity to begin your experiments." : "Enter your laboratory credentials to manage biological subjects."}
+              </p>
             </div>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
               <input 
-                type="text" placeholder="Admin Username" value={username} onChange={e=>setUsername(e.target.value)}
+                type="text" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)}
                 className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500/50 outline-none"
               />
               <input 
                 type="password" placeholder="Laboratory Key" value={password} onChange={e=>setPassword(e.target.value)}
                 className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500/50 outline-none"
               />
-              <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all">
-                AUTHORIZE BRIDGE
+              <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all uppercase text-xs tracking-widest">
+                {isRegistering ? "Initialize Account" : "Authorize Bridge"}
               </button>
             </form>
+            <div className="text-center pt-4 border-t border-zinc-800/50">
+              <button 
+                onClick={() => setIsRegistering(!isRegistering)}
+                className="text-[10px] font-bold text-zinc-500 hover:text-emerald-400 uppercase tracking-widest transition-colors"
+              >
+                {isRegistering ? "Already have an account? Login" : "Don't have an account? Register"}
+              </button>
+            </div>
           </div>
         </Widget>
       </div>
@@ -114,6 +144,12 @@ export default function Laboratory() {
           </div>
           <h1 className="text-4xl font-bold tracking-tight">Private Laboratory</h1>
         </div>
+        <button 
+          onClick={logout}
+          className="text-[10px] font-bold text-zinc-500 hover:text-red-400 uppercase tracking-widest transition-colors"
+        >
+          Deauthorize Session
+        </button>
       </div>
 
       {/* Subject Creator */}
