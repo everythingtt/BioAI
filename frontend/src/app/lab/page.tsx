@@ -35,7 +35,9 @@ export default function Laboratory() {
       const formData = new FormData();
       formData.append("username", username);
       formData.append("password", password);
-      const res = await axios.post(`${backendUrl}/api/auth/login`, formData);
+      const res = await axios.post(`${backendUrl}/api/auth/login`, formData, {
+        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+      });
       
       // We need the user ID from the token or a separate profile call
       // For now, let's just store the token and username
@@ -52,6 +54,8 @@ export default function Laboratory() {
       await axios.post(`${backendUrl}/api/auth/register`, {
         username,
         password
+      }, {
+        headers: { 'Bypass-Tunnel-Reminder': 'true' }
       });
       alert("Registration successful! Please login.");
       setIsRegistering(false);
@@ -65,7 +69,10 @@ export default function Laboratory() {
     try {
       await axios.post(`${backendUrl}/api/characters`, null, {
         params: { name, description: desc, background: back },
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Bypass-Tunnel-Reminder': 'true'
+        }
       });
       setName(""); setDesc(""); setBack("");
       fetchCharacters();
@@ -77,7 +84,10 @@ export default function Laboratory() {
   const deleteCharacter = async (id: string) => {
     try {
       await axios.delete(`${backendUrl}/api/characters/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Bypass-Tunnel-Reminder': 'true'
+        }
       });
       fetchCharacters();
     } catch (e) {
@@ -88,7 +98,10 @@ export default function Laboratory() {
   const togglePublish = async (id: string) => {
     try {
       await axios.post(`${backendUrl}/api/characters/${id}/publish`, null, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Bypass-Tunnel-Reminder': 'true'
+        }
       });
       fetchCharacters();
     } catch (e) {

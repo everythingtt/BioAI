@@ -46,7 +46,9 @@ export const useBioStore = create<BioState>((set, get) => ({
   fetchCharacters: async () => {
     const { backendUrl } = get();
     try {
-      const res = await axios.get(`${backendUrl}/api/characters`);
+      const res = await axios.get(`${backendUrl}/api/characters`, {
+        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+      });
       set({ characters: res.data });
     } catch (e) {
       console.error('Fetch characters failed', e);
@@ -56,7 +58,9 @@ export const useBioStore = create<BioState>((set, get) => ({
   fetchGallery: async () => {
     const { backendUrl } = get();
     try {
-      const res = await axios.get(`${backendUrl}/api/gallery`);
+      const res = await axios.get(`${backendUrl}/api/gallery`, {
+        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+      });
       set({ gallery: res.data });
     } catch (e) {
       console.error('Fetch gallery failed', e);
@@ -66,7 +70,9 @@ export const useBioStore = create<BioState>((set, get) => ({
   checkConnection: async () => {
     const { backendUrl } = get();
     try {
-      const res = await axios.get(`${backendUrl}/api/health`);
+      const res = await axios.get(`${backendUrl}/api/health`, {
+        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+      });
       set({ status: res.data });
     } catch (e) {
       set({ status: { status: 'offline' } });

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Dict, Optional, List
 from enum import Enum
+import datetime
 
 class ChemicalType(str, Enum):
     DOPAMINE = "dopamine"    # Reward, Motivation
