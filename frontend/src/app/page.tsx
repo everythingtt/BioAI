@@ -221,6 +221,7 @@ export default function Home() {
                   type="text" 
                   placeholder="Admin" 
                   value={username}
+                  autoComplete="username"
                   onChange={e=>setUsername(e.target.value)}
                   className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1 text-xs outline-none focus:border-emerald-500/50"
                 />
@@ -228,6 +229,7 @@ export default function Home() {
                   type="password" 
                   placeholder="Password" 
                   value={password}
+                  autoComplete="current-password"
                   onChange={e=>setPassword(e.target.value)}
                   className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1 text-xs outline-none focus:border-emerald-500/50"
                 />
