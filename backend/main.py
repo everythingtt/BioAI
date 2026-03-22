@@ -6,24 +6,31 @@ from api.characters import router as characters_router
 from api.chat import router as chat_router
 from api.auth import router as auth_router
 from db.models import init_db
-from fastapi import Request
-from starlette.responses import Response
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
 
 # Initialize database on startup
 init_db()
 
 app = FastAPI(title="BioAI Backend", description="Ultra-modular Neurochemical AI Engine")
 
+# Custom Middleware to handle Tunnel Bypass and CORS Preflight manually if needed
 @app.middleware("http")
-async def tunnel_bypass_middleware(request: Request, call_next):
-    # This middleware helps ensure the tunnel bypass header is always processed
+async def add_custom_headers(request: Request, call_next):
+    if request.method == "OPTIONS":
+        response = Response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Bypass-Tunnel-Reminder"] = "true"
+        return response
+        
     response = await call_next(request)
-    # Add bypass headers to every outgoing response for good measure
     response.headers["Bypass-Tunnel-Reminder"] = "true"
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
-# Configure CORS for Community access
+# Standard CORS Middleware as a fallback
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
