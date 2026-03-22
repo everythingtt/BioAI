@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NeuralBridge } from "./NeuralBridge";
-import { Globe, FlaskConical, PenTool, LayoutDashboard } from "lucide-react";
+import { Globe, FlaskConical, PenTool, LayoutDashboard, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useBioStore } from "@/store/bioStore";
 
 export function Navbar() {
   const pathname = usePathname();
