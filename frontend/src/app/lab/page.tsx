@@ -55,7 +55,10 @@ export default function Laboratory() {
       formData.append("username", username);
       formData.append("password", password);
       const res = await axios.post(`${backendUrl}/api/auth/login`, formData, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
       
       // We need the user ID from the token or a separate profile call
@@ -74,7 +77,10 @@ export default function Laboratory() {
         username,
         password
       }, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
       alert("Registration successful! Please login.");
       setIsRegistering(false);
@@ -91,7 +97,8 @@ export default function Laboratory() {
         params: { name, description: desc, background: back },
         headers: { 
           Authorization: `Bearer ${token}`,
-          'Bypass-Tunnel-Reminder': 'true'
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
         }
       });
       setName(""); setDesc(""); setBack("");
@@ -106,7 +113,8 @@ export default function Laboratory() {
       await axios.delete(`${backendUrl}/api/characters/${id}`, {
         headers: { 
           Authorization: `Bearer ${token}`,
-          'Bypass-Tunnel-Reminder': 'true'
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
         }
       });
       fetchCharacters();
@@ -120,7 +128,8 @@ export default function Laboratory() {
       await axios.post(`${backendUrl}/api/characters/${id}/publish`, null, {
         headers: { 
           Authorization: `Bearer ${token}`,
-          'Bypass-Tunnel-Reminder': 'true'
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
         }
       });
       fetchCharacters();

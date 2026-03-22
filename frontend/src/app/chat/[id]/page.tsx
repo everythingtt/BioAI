@@ -24,7 +24,10 @@ export default function InteractionChamber() {
   const fetchCharacter = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/characters/${id}`, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
       setCharacter(res.data);
     } catch (e) {
@@ -65,7 +68,10 @@ export default function InteractionChamber() {
         message: input,
         history: messages
       }, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
       setMessages(prev => [...prev, { role: "assistant", content: res.data.response }]);
       setBioFeedback(res.data.bio_feedback);

@@ -52,6 +52,7 @@ export const useBioStore = create<BioState>((set, get) => ({
       const res = await axios.get(`${backendUrl}/api/characters`, {
         headers: { 
           'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true',
           'Authorization': `Bearer ${token}`
         }
       });
@@ -67,6 +68,7 @@ export const useBioStore = create<BioState>((set, get) => ({
       const res = await axios.get(`${backendUrl}/api/gallery`, {
         headers: {
           'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true',
           'Authorization': token ? `Bearer ${token}` : ''
         }
       });
@@ -80,7 +82,10 @@ export const useBioStore = create<BioState>((set, get) => ({
     const { backendUrl } = get();
     try {
       const res = await axios.get(`${backendUrl}/api/health`, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'ngrok-skip-browser-warning': 'true'
+        }
       });
       set({ status: res.data });
     } catch (e) {

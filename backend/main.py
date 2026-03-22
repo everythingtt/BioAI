@@ -23,10 +23,12 @@ async def add_custom_headers(request: Request, call_next):
         response.headers["Access-Control-Allow-Methods"] = "*"
         response.headers["Access-Control-Allow-Headers"] = "*"
         response.headers["Bypass-Tunnel-Reminder"] = "true"
+        response.headers["ngrok-skip-browser-warning"] = "true"
         return response
         
     response = await call_next(request)
     response.headers["Bypass-Tunnel-Reminder"] = "true"
+    response.headers["ngrok-skip-browser-warning"] = "true"
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
