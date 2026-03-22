@@ -30,7 +30,7 @@ interface BioState {
 export const useBioStore = create<BioState>((set, get) => ({
   backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 
               process.env.NEXT_PUBLIC_LOCALTUNNEL_SERVER || 
-              'https://fair-eggs-know.loca.lt',
+              'https://hot-things-try.loca.lt',
   token: null,
   user: null,
   characters: [],
