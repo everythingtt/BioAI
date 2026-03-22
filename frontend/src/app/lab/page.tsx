@@ -144,10 +144,12 @@ export default function Laboratory() {
             <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
               <input 
                 type="text" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)}
+                autoComplete="username"
                 className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500/50 outline-none"
               />
               <input 
                 type="password" placeholder="Laboratory Key" value={password} onChange={e=>setPassword(e.target.value)}
+                autoComplete={isRegistering ? "new-password" : "current-password"}
                 className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500/50 outline-none"
               />
               <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all uppercase text-xs tracking-widest">
