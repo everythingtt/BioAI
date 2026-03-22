@@ -12,11 +12,11 @@ init_db()
 
 app = FastAPI(title="BioAI Backend", description="Ultra-modular Neurochemical AI Engine")
 
-# Configure CORS for GitHub Pages
+# Configure CORS for Community access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify the GitHub Pages URL
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False, # Set to False to allow wildcard origins with JWT
     allow_methods=["*"],
     allow_headers=["*"],
 )

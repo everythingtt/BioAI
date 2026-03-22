@@ -22,8 +22,27 @@ export default function Laboratory() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [back, setBack] = useState("");
+  const [selectedSpecies, setSelectedSpecies] = useState("human");
 
   const [isRegistering, setIsRegistering] = useState(false);
+
+  const SPECIES_TEMPLATES: Record<string, any> = {
+    human: {
+      name: "Human Standard",
+      decay_rates: { dopamine: 0.1, serotonin: 0.05, oxytocin: 0.02, cortisol: 0.08, adrenaline: 0.15 },
+      sensitivities: { dopamine: 1.0, serotonin: 1.0, oxytocin: 1.0, cortisol: 1.0, adrenaline: 1.0 }
+    },
+    synthetic: {
+      name: "Synthetic Core",
+      decay_rates: { dopamine: 0.05, serotonin: 0.02, oxytocin: 0.01, cortisol: 0.02, adrenaline: 0.3 },
+      sensitivities: { dopamine: 1.5, serotonin: 0.5, oxytocin: 0.2, cortisol: 0.1, adrenaline: 2.0 }
+    },
+    eldritch: {
+      name: "Eldritch Entity",
+      decay_rates: { dopamine: 0.01, serotonin: 0.3, oxytocin: 0.001, cortisol: 0.01, adrenaline: 0.05 },
+      sensitivities: { dopamine: 0.5, serotonin: 2.0, oxytocin: 0.1, cortisol: 3.0, adrenaline: 0.5 }
+    }
+  };
 
   useEffect(() => {
     if (status?.status === 'healthy' && isLoggedIn) fetchCharacters();
@@ -67,7 +86,8 @@ export default function Laboratory() {
   const createCharacter = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${backendUrl}/api/characters`, null, {
+      const biology = SPECIES_TEMPLATES[selectedSpecies];
+      await axios.post(`${backendUrl}/api/characters`, biology, {
         params: { name, description: desc, background: back },
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -171,11 +191,23 @@ export default function Laboratory() {
           <form onSubmit={createCharacter} className="space-y-4">
             <input 
               placeholder="Subject Name" value={name} onChange={e=>setName(e.target.value)}
-              className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-2 text-sm"
+              className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-2 text-sm focus:border-emerald-500/50 outline-none"
             />
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase text-zinc-500 tracking-widest ml-1">Biological Template</label>
+              <select 
+                value={selectedSpecies}
+                onChange={e=>setSelectedSpecies(e.target.value)}
+                className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-2 text-sm focus:border-emerald-500/50 outline-none"
+              >
+                <option value="human">Human Standard</option>
+                <option value="synthetic">Synthetic Core</option>
+                <option value="eldritch">Eldritch Entity</option>
+              </select>
+            </div>
             <textarea 
               placeholder="Description..." value={desc} onChange={e=>setDesc(e.target.value)}
-              className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-2 text-sm h-20"
+              className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-2 text-sm h-20 focus:border-emerald-500/50 outline-none"
             />
             <textarea 
               placeholder="Background Directives..." value={back} onChange={e=>setBack(e.target.value)}

@@ -111,8 +111,8 @@ async def stimulate_character(char_id: str, impulse: Dict[ChemicalType, float], 
     return updated_state
 
 @router.get("/characters", response_model=List[Character])
-async def list_characters(db: Session = Depends(get_db)):
-    db_chars = db.query(DBCharacter).all()
+async def list_characters(db: Session = Depends(get_db), current_user: TokenData = Depends(get_current_user)):
+    db_chars = db.query(DBCharacter).filter(DBCharacter.owner_id == current_user.user_id).all()
     result = []
     for db_char in db_chars:
         result.append(Character(

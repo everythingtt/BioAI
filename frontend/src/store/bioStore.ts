@@ -44,10 +44,14 @@ export const useBioStore = create<BioState>((set, get) => ({
   logout: () => set({ token: null, user: null, isLoggedIn: false, characters: [] }),
 
   fetchCharacters: async () => {
-    const { backendUrl } = get();
+    const { backendUrl, token } = get();
+    if (!token) return;
     try {
       const res = await axios.get(`${backendUrl}/api/characters`, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: { 
+          'Bypass-Tunnel-Reminder': 'true',
+          'Authorization': `Bearer ${token}`
+        }
       });
       set({ characters: res.data });
     } catch (e) {
@@ -56,10 +60,13 @@ export const useBioStore = create<BioState>((set, get) => ({
   },
 
   fetchGallery: async () => {
-    const { backendUrl } = get();
+    const { backendUrl, token } = get();
     try {
       const res = await axios.get(`${backendUrl}/api/gallery`, {
-        headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        headers: {
+          'Bypass-Tunnel-Reminder': 'true',
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
       });
       set({ gallery: res.data });
     } catch (e) {

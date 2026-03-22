@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();
+  const { isLoggedIn, user, logout } = useBioStore();
 
   const navItems = [
     { name: "Discovery", href: "/hub", icon: Globe },
@@ -23,9 +24,9 @@ export function Navbar() {
           <div className="w-10 h-10 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-105 transition-transform">
             <LayoutDashboard className="text-white" size={20} />
           </div>
-          <div>
+          <div className="hidden md:block">
             <h1 className="text-lg font-bold tracking-tighter leading-tight">BioAI</h1>
-            <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em] leading-tight">Neuro Engine</p>
+            <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.2em] leading-tight">Neuro Network</p>
           </div>
         </Link>
 
@@ -43,9 +44,19 @@ export function Navbar() {
               )}
             >
               <item.icon size={14} />
-              {item.name}
+              <span className="hidden sm:inline">{item.name}</span>
             </Link>
           ))}
+          
+          {isLoggedIn && (
+            <button 
+              onClick={logout}
+              className="px-5 py-2 rounded-xl text-xs font-bold text-zinc-500 hover:text-red-400 transition-all flex items-center gap-2"
+            >
+              <Lock size={14} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          )}
         </div>
 
         {/* Bridge */}
