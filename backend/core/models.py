@@ -58,6 +58,9 @@ class User(BaseModel):
     username: str
     created_at: datetime.datetime
 
+    class Config:
+        from_attributes = True
+
 class UserCreate(BaseModel):
     username: str
     password: str

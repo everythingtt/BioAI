@@ -15,8 +15,9 @@ app = FastAPI(title="BioAI Backend", description="Ultra-modular Neurochemical AI
 # Configure CORS for Community access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False, # Set to False to allow wildcard origins with JWT
+    allow_origin_regex="https://.*vercel\.app", # Allow all Vercel subdomains
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
