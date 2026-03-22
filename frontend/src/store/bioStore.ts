@@ -30,7 +30,7 @@ interface BioState {
 export const useBioStore = create<BioState>((set, get) => ({
   backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 
               process.env.NEXT_PUBLIC_LOCALTUNNEL_SERVER || 
-              'https://large-clouds-juggle.loca.lt',
+              'https://bioai-engine-community.loca.lt',
   token: null,
   user: null,
   characters: [],

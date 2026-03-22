@@ -6,18 +6,28 @@ from api.characters import router as characters_router
 from api.chat import router as chat_router
 from api.auth import router as auth_router
 from db.models import init_db
+from fastapi import Request
+from starlette.responses import Response
 
 # Initialize database on startup
 init_db()
 
 app = FastAPI(title="BioAI Backend", description="Ultra-modular Neurochemical AI Engine")
 
+@app.middleware("http")
+async def tunnel_bypass_middleware(request: Request, call_next):
+    # This middleware helps ensure the tunnel bypass header is always processed
+    response = await call_next(request)
+    # Add bypass headers to every outgoing response for good measure
+    response.headers["Bypass-Tunnel-Reminder"] = "true"
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
+
 # Configure CORS for Community access
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex="https://.*vercel\.app", # Allow all Vercel subdomains
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
